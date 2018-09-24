@@ -1,0 +1,31 @@
+<apex:component >
+<script id="OrigamiFormGlobalMessage" type="text/x-handlebars-template">
+
+<div class="o-forms-message o-forms-message--highlight">
+	<p>{{message}}</p>
+</div>
+
+</script>
+
+
+<script id="OrigamiFormGlobalErrorMessage" type="text/x-handlebars-template">
+
+<div class="o-forms-message o-forms-message--error">
+	<p>{{message}}</p>
+</div>
+
+</script>
+
+<script id="OrigamiFormGlobalMessageWithButton" type="text/x-handlebars-template">
+
+<div class="o-forms-message o-forms-message--highlight">
+	<p>
+		{{message}} <button class="o-buttons o-buttons--standout" style="padding-left:15px;" onClick="{{onClickAction}}">{{Label}}</button>
+	</p>
+
+
+</div>
+
+</script>
+
+</apex:component>

@@ -1,0 +1,594 @@
+<apex:page controller="PeopleFinderController" showHeader="true" sidebar="false">
+    
+    <link rel="stylesheet" href="//build.origami.ft.com/v2/bundles/css?modules=o-header@^4.0.0,o-footer@^4.1.1,o-ft-icons@^3.1.0,o-grid@^4.0.7" />
+    <link rel="stylesheet" href="//build.origami.ft.com/v2/bundles/css?modules=o-fonts@^2.1.0,o-colors@^3.3.1,o-buttons@^3.0.3,o-forms@^2.0.0" />
+    <link rel="stylesheet" href="//build.origami.ft.com/v2/bundles/css?modules=o-typography@^3.1.0,o-table@^3.0.1,o-aside-panel@^2.0.0" />
+     <style type="text/css">
+
+     html {
+        font-family: BentonSans, sans-serif;
+        overflow-x: hidden; // Prevent navigation menus from creating extra space on sides of the page
+    }
+     .noSidebarCell{
+        padding:0px;
+     }
+
+     table#bodyTable.outerNoSidebar{
+        padding: 0px;
+     }
+         div#search,div#searchAll,div#businessArea,div#searchResults{
+         padding-left:5%;
+         }
+         div#search{
+         padding-top:25px;
+         }
+         div#searchResults{
+         padding-right:5%;
+         }
+     </style>
+    
+    <div class="o-grid-row">
+             <!--Origami Header Component -->
+             <div id="header" data-o-grid-colspan="12"> 
+                    <c:OrigamiHeader />
+            </div>
+            <!--Origami Header Component END-->
+    </div>
+    <div class="o-grid-row">
+             <!--Origami Form Messages Component || ErrorMessages & PageMessages -->
+             <div id="messages" data-o-grid-colspan="8 S12 M8">
+                    <c:OrigamiFormMessages />
+            </div>
+            <!--Origami Form Messages Component END-->
+    </div>
+    <div class="o-grid-row">
+                <!--Origami Form Text Input Component || Find... input text field-->
+                 <div id="search" data-o-grid-colspan="8 S12 M8" > 
+                        <c:OrigamiFormTextInput />
+                </div>
+                <!--Origami Form Text Input Component END-->
+
+                <!--Origami Aside Panel-->
+                <div id="quickLinks" data-o-grid-colspan="4 S12 M4">
+                    <c:OrigamiGroupButtons />
+                    <c:OrigamiAsidePanel />
+                </div>
+                <!--Origami Aside Panel END -->
+    </div>
+    <div class="o-grid-row">
+                <!--Origami Form Checkbox Component || Search all fields checkbox-->
+                 <div id="searchAll" data-o-grid-colspan="8 S12 M8" > 
+                        <c:OrigamiFormCheckbox />
+                </div>
+                <!--Origami Form Checkbox Component END-->
+    </div>
+
+    <div class="o-grid-row">        
+
+                <!--Origami Form Select Option || Search By Business Area drop down-->
+                <div id="businessArea" data-o-grid-colspan="8 S12 M8" >
+                    <c:OrigamiFormSelectOption />
+                </div>
+                <!--Origami Form Select Option END-->
+    </div>      
+
+    <div class="o-grid-row">
+            <!--Origami Table || Search results table-->
+            <div id="searchResults" data-o-grid-colspan="12">
+               <c:OrigamiTable />
+            </div>
+            <!--Origami Table END -->
+    </div>
+    <div class="o-grid-row">
+            <!--Origami Footer Component -->
+            <div id="footer" data-o-grid-colspan="12">
+                <c:OrigamiFooter />
+            </div>
+            
+            <!--Origami Footer Component END-->
+    </div>
+      
+     
+    <apex:includeScript value="{!$Resource.JavascriptHelper}"/>
+    <apex:includeScript value="{!$Resource.Handlebars}"/>
+    <!--IMPORT ORIGAMI JS-->
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script type="text/javascript">
+        
+    j$ = jQuery.noConflict();
+
+    //Origami Sources
+    var quickLinkButtonsSource = j$("#OrigamiButtonGroup").html();
+    var headerSource = j$("#OrigamiHeader").html();
+    var peopleFinderResultsSource = j$("#OrigamiTable").html();
+    var errorMessagesSource = j$("#OrigamiFormGlobalErrorMessage").html();
+
+        function init(){
+
+            j$ = jQuery.noConflict();
+
+            var hasExportPermission = false;
+            
+            //////////////////////////////
+            //Initialise Header Component
+            //////////////////////////////
+            var headerContext;
+            headerContext = {Title: "People Finder", Tagline: " ", hasPrimaryNav: false}
+            var headerTemplate = Handlebars.compile(headerSource);
+
+            if(headerTemplate(headerContext) != null){
+                document.getElementById("header").innerHTML = headerTemplate(headerContext);
+            }
+
+            //////////////////////////////
+            //Initialise Footer Component
+            //////////////////////////////
+            var footerContext;
+            footerContext = {SectionLabel: "",
+                             sectionLinks: [
+                                    {URL: "", LinkLabel: ""}
+                                 ]
+                            }
+
+            var footerSource = j$("#OrigamiFooter").html();
+            var footerTemplate = Handlebars.compile(footerSource);
+
+            if(footerTemplate(footerContext) != null){
+                document.getElementById("footer").innerHTML = footerTemplate(footerContext);
+            }
+
+
+            //////////////////////////////////////////
+            //Initialise Find... Text Input Component
+            //////////////////////////////////////////
+            var findInputContext;
+            findInputContext = {Label: "Find...",PromptText: "", Id: "searchInput", Placeholder: "First Name Last Name...", ButtonLabel: "Go",
+                                onClickAction: "getUsers()"}
+
+            var findInputSource = j$("#OrigamiFormTextInputWithSuffixButton").html();
+            var findInputTemplate = Handlebars.compile(findInputSource);
+
+            if(findInputTemplate(findInputContext) != null){
+                document.getElementById("search").innerHTML = findInputTemplate(findInputContext);
+            }
+
+            ///////////////////////////////////////////////////
+            //Initialise Search All Fields Checkbox Component
+            ///////////////////////////////////////////////////
+            var searchAllFieldsContext;
+            searchAllFieldsContext = {Label: "",
+                                      checkboxes: [
+                                        {Id: "allfields", Name: "allfields", CheckboxLabel: "Search all fields", Value: ""}
+
+                                      ]
+                                     }
+
+            var searchAllFieldsSource = j$("#OrigamiFormSmallCheckboxes").html();
+            var searchAllFieldsTemplate = Handlebars.compile(searchAllFieldsSource);
+
+            if(searchAllFieldsTemplate(searchAllFieldsContext) != null){
+                document.getElementById("searchAll").innerHTML = searchAllFieldsTemplate(searchAllFieldsContext);
+            }
+
+            ////////////////////////////////////////////////////
+            //Initialise Business Area Select Option Component
+            ////////////////////////////////////////////////////
+            var businessAreaContext;
+            businessAreaContext = {Label: "Search by Business Area", selectId: "businessAreaSelect", suffixButtonOnClick: "getUsers()",
+                                   selectOptions: [
+                                            {Value: "Please select a business area", ValueLabel: "Please select a business area"},
+                                            {Value: "B2B", ValueLabel: "B2B"},
+                                            {Value: "Board", ValueLabel: "Board"},
+                                            {Value: "Commercial", ValueLabel: "Commercial"},
+                                            {Value: "Communications", ValueLabel: "Communications"},
+                                            {Value: "Editorial", ValueLabel: "Editorial"},
+                                            {Value: "Facilities and Operations", ValueLabel: "Facilities and Operations"},
+                                            {Value: "FT.Com", ValueLabel: "FT.Com"},
+                                            {Value: "FT Chinese", ValueLabel: "FT Chinese"},
+                                            {Value: "Global Finance", ValueLabel: "Global Finance"},
+                                            {Value: "Global HR", ValueLabel: "Global HR"},
+                                            {Value: "NYIF and ExecSense", ValueLabel: "NYIF and ExecSense"},
+                                            {Value: "Pearson Professional", ValueLabel: "Pearson Professional"},
+                                            {Value: "Product Management", ValueLabel: "Product Management"},
+                                            {Value: "Strategic Products", ValueLabel: "Strategic Products"},
+                                            {Value: "Strategy & Efficacy", ValueLabel: "Strategy & Efficacy"},
+                                            {Value: "Technology", ValueLabel: "Technology"}
+                                    ]
+                                }
+            var businessAreaSource = j$("#OrigamiSelectOptionSuffixButton").html();
+            
+            var businessAreaTemplate = Handlebars.compile(businessAreaSource);
+
+            if(businessAreaTemplate(businessAreaContext) != null){
+                document.getElementById("businessArea").innerHTML = businessAreaTemplate(businessAreaContext);
+            }
+
+            
+            ////////////////////////////////////////////////////
+            //Determine User export permissions 
+            ////////////////////////////////////////////////////
+            Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.PeopleFinderController.doesUserHaveExportPermission}',
+                function(result, event){
+                    if (event.status) {
+                       hasExportPermission = result;
+                       
+                       var quickLinkButtonsContext;
+
+                       if(hasExportPermission === true){
+
+                         quickLinkButtonsContext = { buttons: [
+                                                    {extraCSSClasses: "", onClickMethod: "editMyDetails()", disabled:false, Name:"Edit My Details"},
+                                                    {extraCSSClasses: "", onClickMethod: "exportToExcel()", disabled:false, Name:"Export"}
+                                                ]
+                                            }
+
+                       }else{
+                        quickLinkButtonsContext = { buttons: [
+                                                    {extraCSSClasses: "", onClickMethod: "editMyDetails()", disabled:false, Name:"Edit My Details"}
+                                                ]
+                                            }
+                       }
+
+
+                        
+                        var quickLinkButtonsTemplate = Handlebars.compile(quickLinkButtonsSource);
+                        
+                        ///////////////////////////////////////////////////
+                        //Initialise Quick Links Component
+                        ///////////////////////////////////////////////////
+                        var quickLinksContent = '';
+                        quickLinksContent = quickLinkButtonsTemplate(quickLinkButtonsContext);
+                        quickLinksContent = new Handlebars.SafeString(quickLinksContent);
+                        
+                        var quickLinksContext;
+                        quickLinksContext = {Heading: "Quick Links", Content: quickLinksContent }
+
+                        var quickLinksSource = j$("#OrigamiAsidePanel").html();
+                        var quickLinksTemplate = Handlebars.compile(quickLinksSource);
+
+                        if(quickLinksTemplate(quickLinksContext) != null){
+                           document.getElementById("quickLinks").innerHTML = quickLinksTemplate(quickLinksContext);
+                        }
+
+                        
+                        
+                    } else if (event.type === 'exception') {
+                        document.getElementById("messages").innerHTML = event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                    } else {
+                        document.getElementById("messages").innerHTML = event.message;
+                    }
+                }, 
+                {escape: true}
+            );
+        }
+
+        
+
+        function getUsers(){ 
+            
+            j$ = jQuery.noConflict();
+
+            var busineesArea = document.getElementById('businessAreaSelect').value;
+            var searchInput = document.getElementById('searchInput').value;
+            var hasCheckedAllFields = document.getElementById('allfields').checked;
+            var device = determineDevice();
+            var hasEditPermissions = false;
+            
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.PeopleFinderController.doesUserHaveEditPermission}',
+                function(result, event){
+                    if (event.status) {
+                       hasEditPermissions = result;
+
+                    } else if (event.type === 'exception') {
+                        document.getElementById("messages").innerHTML = event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                    } else {
+                        document.getElementById("messages").innerHTML = event.message;
+                    }
+                }, 
+                {escape: true}
+            );
+
+            
+
+            Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.PeopleFinderController.getCompanyUsers}',busineesArea,searchInput,hasCheckedAllFields,
+                    function(result, event){
+                        if (event.status) {
+                            if(result.length > 0){
+                                                               
+                                 var peopleFinderResultsContext = [];
+                                 if(device == false){
+
+                                        peopleFinderResultsContext = {columnHeaders:[
+                                                                            {Heading: "Action" , DataType: "", ExtraCssStyle: "font-size: 15px; text-align:left"},
+                                                                            {Heading: "Name" , DataType: "", ExtraCssStyle: "font-size: 15px; text-align:left"},
+                                                                            {Heading: "Title" , DataType: "", ExtraCssStyle: "font-size: 15px; text-align:left"},
+                                                                            {Heading: "Business Area" , DataType: "", ExtraCssStyle: "font-size: 15px; text-align:left"},
+                                                                            {Heading: "User Type" , DataType: "", ExtraCssStyle: "font-size: 15px; text-align:left"},
+                                                                            {Heading: "Extension" , DataType: "numeric", ExtraCssStyle: "font-size: 15px; text-align:left"},
+                                                                            {Heading: "Manager" , DataType: "", ExtraCssStyle: "font-size: 15px; text-align:left"},
+                                                                            {Heading: "Desk No." , DataType: "numeric", ExtraCssStyle: "font-size: 15px; text-align:left"},
+                                                                            {Heading: "Region" , DataType: "", ExtraCssStyle: "font-size: 15px; text-align:left"}
+                                                                     ],
+                                                                     TableWrapperExtraCSS:'background-color: #fff1e0;',
+                                                                     rows:[]
+                                                                     }
+                                                         
+                                    for (var u = 0; u < result.length; u++) { 
+                                        var row = [];
+                                        var rowDetails = [];
+
+                                        //Clean undefined elements                                        
+                                        var fullName = this.htmlUnescape(cleanUndefinedVariables(result[u].FirstName) + ' ' + cleanUndefinedVariables(result[u].LastName));
+                                        result[u].Manager = cleanUndefinedVariables(result[u].Manager);
+                                        var title = cleanUndefinedVariables(result[u].Title);
+                                        var businessAreaValue = cleanUndefinedVariables(result[u].BusinessArea__c);
+                                        var userType = cleanUndefinedVariables(result[u].User_Type__c);
+                                        var extension = cleanUndefinedVariables(result[u].Extension);
+                                        var deskNum = cleanUndefinedVariables(result[u].Desk_Number__c);
+                                        var region = cleanUndefinedVariables(result[u].FT_Region__c);
+
+                                        var resultsActionButtonsContext;
+
+                                        //for(var u in result){
+                                        var managerName = '';
+                                        
+                                        managerName += this.htmlUnescape(result[u].Manager.FirstName + ' ' + result[u].Manager.LastName);
+                                        
+                                        if(hasEditPermissions == true){
+                                            
+                                            var editUserOnClick = 'editUser(\''+ result[u].Id +'\'\)';
+                                            var viewUserOnClick = 'viewUser(\''+ result[u].Id +'\'\)';
+
+                                            resultsActionButtonsContext = { 
+                                                    buttons: [
+                                                    {extraCSSClasses: "", onClickMethod: editUserOnClick, disabled:false, Name:"Edit"},
+                                                    {extraCSSClasses: "", onClickMethod: viewUserOnClick, disabled:false, Name:"View"}
+                                                    ]
+
+                                            }
+                                            
+                                        }else{
+                                            var viewUserOnClick = 'viewUser(\''+ result[u].Id +'\'\)';
+
+                                            resultsActionButtonsContext = { buttons: [
+                                                                                {extraCSSClasses: "", onClickMethod: viewUserOnClick, disabled:false, Name:"View"}
+                                                                            ]
+                                                                          }
+                                        }
+
+                                        
+                                        
+                                        
+                                        var actionButtonsTemplate = Handlebars.compile(quickLinkButtonsSource);
+                                        
+                                        ///////////////////////////////////////////////////
+                                        //Initialise Action Buttons Component
+                                        ///////////////////////////////////////////////////
+                                        var actionButtonsContent = '';
+                                        actionButtonsContent = actionButtonsTemplate(resultsActionButtonsContext);
+                                        actionButtonsContent = new Handlebars.SafeString(actionButtonsContent);
+
+
+                                        rowDetails = [
+                                                {content: actionButtonsContent, CssClass:'o-table--horizontal-lines', Datatype: '', ExtraCssStyle: "display:inline;"},
+                                                {content: fullName, CssClass:'o-table--horizontal-lines', Datatype: '', ExtraCssStyle: "vertical-align: middle; font-size: 15px;"},
+                                                {content: title, CssClass:'o-table--horizontal-lines', Datatype: '', ExtraCssStyle: "vertical-align: middle; font-size: 15px;"},
+                                                {content: businessAreaValue, CssClass:'o-table--horizontal-lines', Datatype: '', ExtraCssStyle: "vertical-align: middle; font-size: 15px;"},
+                                                {content: userType, CssClass:'o-table--horizontal-lines', Datatype: '', ExtraCssStyle: "vertical-align: middle; font-size: 15px;"},
+                                                {content: extension, CssClass:'', Datatype: 'numeric', ExtraCssStyle: "vertical-align: middle; font-size: 15px;"},
+                                                {content: managerName, CssClass:'o-table--horizontal-lines', Datatype: '', ExtraCssStyle: "vertical-align: middle; font-size: 15px;"},
+                                                {content: deskNum, CssClass:'', Datatype: 'numeric', ExtraCssStyle: "vertical-align: middle; font-size: 15px;"},
+                                                {content: region, CssClass:'o-table--horizontal-lines', Datatype: '', ExtraCssStyle: "vertical-align: middle; font-size: 15px;"}
+
+                                        ];
+                                        
+                                        row["rowDetails"] = rowDetails;
+
+                                        //console.dir(row);
+                                        peopleFinderResultsContext["rows"].push(row);
+                                        
+                                    }
+                                    
+                                        
+                                    
+                                    
+                                 }else{
+
+                                    peopleFinderResultsContext = {columnHeaders:[
+                                                                            {Heading: "Name" , DataType: "", ExtraCssStyle: "font-size: 15px; text-align:left"},
+                                                                            {Heading: "Extension" , DataType: "numeric", ExtraCssStyle: "font-size: 15px; text-align:left"},
+                                                                            {Heading: "Action" , DataType: "", ExtraCssStyle: "font-size: 15px; text-align:left"}
+                                                                     ],
+                                                                     TableWrapperExtraCSS:'background-color: #fff1e0;',
+                                                                     rows:[]
+                                                                     }
+                                   for (var u = 0; u < result.length; u++) { 
+
+                                        //Clean undefined elements
+                                        var fullName = cleanUndefinedVariables(result[u].FirstName) + ' ' + cleanUndefinedVariables(result[u].LastName);
+                                        var extension = cleanUndefinedVariables(result[u].Extension);
+                                        var row = [];
+
+                                        if(hasEditPermissions == true){
+                                            
+                                            var editUserOnClick = 'editUser(\''+ result[u].Id +'\'\)';
+                                            var viewUserOnClick = 'viewUser(\''+ result[u].Id +'\'\)';
+
+                                            resultsActionButtonsContext = { 
+                                                    buttons: [
+                                                    {extraCSSClasses: "", onClickMethod: editUserOnClick, disabled:false, Name:"Edit"},
+                                                    {extraCSSClasses: "", onClickMethod: viewUserOnClick, disabled:false, Name:"View"}
+                                                    ]
+
+                                            }
+                                            
+                                        }else{
+                                            var viewUserOnClick = 'viewUser(\''+ result[u].Id +'\'\)';
+
+                                            resultsActionButtonsContext = { buttons: [
+                                                                                {extraCSSClasses: "", onClickMethod: viewUserOnClick, disabled:false, Name:"View"}
+                                                                            ]
+                                                                          }
+                                        }
+
+                                        
+                                        
+                                        
+                                        var actionButtonsTemplate = Handlebars.compile(quickLinkButtonsSource);
+                                        
+                                        ///////////////////////////////////////////////////
+                                        //Initialise Action Buttons Component
+                                        ///////////////////////////////////////////////////
+                                        var actionButtonsContent = '';
+                                        actionButtonsContent = actionButtonsTemplate(resultsActionButtonsContext);
+                                        actionButtonsContent = new Handlebars.SafeString(actionButtonsContent);
+
+
+                                        var rowDetails = [
+                                                
+                                                {content: fullName, CssClass:'o-table--horizontal-lines', Datatype: ''},
+                                                {content: extension, CssClass:'', Datatype: 'numeric'},
+                                                {content: actionButtonsContent, CssClass:'', Datatype: ''}
+                                                
+                                        ];
+                                        row["rowDetails"] = rowDetails;
+
+                                        //console.dir(row);
+                                        peopleFinderResultsContext["rows"].push(row);
+                                        
+                                    }
+                                
+                                 }
+                               
+                                var peopleFinderResultsTemplate = Handlebars.compile(peopleFinderResultsSource);
+                                if(peopleFinderResultsTemplate(peopleFinderResultsContext) != null){
+                                   document.getElementById("searchResults").innerHTML = peopleFinderResultsTemplate(peopleFinderResultsContext);
+                                   document.getElementById('messages').innerHTML = null;
+                                }
+                               
+                            }else{
+                                var errorMessageContext = {message: "There were no results for your search criteria. Please try again."};
+                                var errorMessagesTemplate = Handlebars.compile(errorMessagesSource);
+                                var table = '';
+                                if(errorMessagesTemplate(errorMessageContext) != null){
+                                    document.getElementById('messages').innerHTML = errorMessagesTemplate(errorMessageContext);
+                                }
+                                
+                                document.getElementById('searchResults').innerHTML = table;
+                            }
+
+                        } else if (event.type === 'exception') {
+                            document.getElementById("messages").innerHTML = 
+                                event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                        } else {
+                            document.getElementById("messages").innerHTML = event.message;
+                        }
+                    }, 
+                    {escape: true}
+                );
+        }
+
+        function editMyDetails(){
+          Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.PeopleFinderController.editMyDetails}',
+                function(result, event){
+                    if (event.status) {
+                        var device = determineDevice();
+
+                        if(device){
+                            sforce.one.navigateToURL(result);
+                        }else{
+                            window.location = result;
+                        }
+                      
+
+                    } else if (event.type === 'exception') {
+                        document.getElementById("messages").innerHTML = 
+                            event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                    } else {
+                        document.getElementById("messages").innerHTML = event.message;
+                    }
+                }, 
+                {escape: true}
+            );
+        }
+
+        function htmlEscape(str) {
+            return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+        }
+        function htmlUnescape(value){
+            return String(value)
+                .replace(/&quot;/g, '"')
+                .replace(/&#39;/g, "'")
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&amp;/g, '&');
+        }        
+
+        function editUser(selectedUserId){
+          Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.PeopleFinderController.editUserDetails}',selectedUserId,
+                function(result, event){
+                    if (event.status) {
+                      var device = determineDevice();
+
+                        if(device){
+                            sforce.one.navigateToURL(result);
+                        }else{
+                            window.location = result;
+                        }
+
+                    } else if (event.type === 'exception') {
+                        document.getElementById("messages").innerHTML = 
+                            event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                    } else {
+                        document.getElementById("messages").innerHTML = event.message;
+                    }
+                }, 
+                {escape: true}
+            );
+        }
+
+
+        function viewUser(selectedUserId){
+          Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.PeopleFinderController.viewUserDetails}',selectedUserId,
+                function(result, event){
+                    if (event.status) {
+                     var device = determineDevice();
+
+                        if(device){
+                            sforce.one.navigateToURL(result);
+                        }else{
+                            window.location = result;
+                        }
+
+                    } else if (event.type === 'exception') {
+                        document.getElementById("messages").innerHTML = 
+                            event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                    } else {
+                        document.getElementById("messages").innerHTML = event.message;
+                    }
+                }, 
+                {escape: true}
+            );
+        }
+
+
+        function exportToExcel(){
+            
+        }
+
+        init();
+     </script>
+
+    
+    <script src="//build.origami.ft.com/v2/bundles/js?modules=o-header@^4.0.0"></script>
+    <script src="//build.origami.ft.com/v2/bundles/js?modules=o-table@^3.0.1"></script>
+    <script src="//build.origami.ft.com/v2/bundles/js?modules=o-grid@^4.0.7"></script>
+
+</apex:page>

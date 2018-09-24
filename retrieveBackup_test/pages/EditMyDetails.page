@@ -1,0 +1,313 @@
+<apex:page controller="EditMyDetailsController" id="EditMyDetails" sidebar="false" >
+    <link rel="stylesheet" href="//build.origami.ft.com/v2/bundles/css?modules=o-forms@^2.0.0,o-header@^4.0.0,o-footer@^4.1.1,o-ft-icons@^3.1.0,o-buttons@3.0.3,o-fonts@^2.1.0,o-colors@^3.3.1,o-grid@^4.0.7" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+    <style type="text/css">
+
+     html {
+        font-family: BentonSans, sans-serif;
+        overflow-x: hidden; // Prevent navigation menus from creating extra space on sides of the page
+    }
+     .noSidebarCell{
+        padding:0px;
+     }
+     table#bodyTable.outerNoSidebar{
+        padding: 0px;        
+     }
+     input.o-forms-text{
+        margin-bottom: 25px !important;
+      }
+	 [data-o-grid-colspan]{
+        padding-right:5%; 
+        padding-left:5%;
+     }
+        div#footer{
+        padding-right:0px; 
+        padding-left:0px;
+     }
+     
+     </style>
+
+    <!--Origami Header Component -->
+    <div id="header"> 
+        <c:OrigamiHeader />
+    </div>
+    <!--Origami Header Component END-->
+
+    <div id="messages">
+        <c:OrigamiFormMessages />
+        <div class="o-forms-message o-forms-message--error" id="responseErrors"></div>
+        <div class="o-forms-message o-forms-message--highlight" id="pageMessages"></div>
+    </div>
+    <div class="o-grid-row" >
+        <div data-o-grid-colspan="12 L7 XL6" >
+            <div>
+                <div class="o-forms-group" >
+                    <label class="o-forms-label">FT Region</label>
+                    <input id="ftRegion" type="text" placeholder="" class="o-forms-text" value="" disabled="true" ></input>
+                    <label class="o-forms-label">Joining Date</label>
+                    <input id="joiningDate" type="text" class="o-forms-text" value="" disabled="true"></input>
+                    <label class="o-forms-label">Title</label>
+                    <input id="title" type="text" placeholder="" class="o-forms-text" value="" ></input>   
+                </div>
+            </div>
+        </div>
+        <div data-o-grid-colspan="12 L7 XL6" >
+            <div>
+                <label class="o-forms-label">Manager</label>
+                <input id="manager" type="text" placeholder="" class="o-forms-text" value="" ></input>            	
+            	<label class="o-forms-label">Desk Number</label>
+                <input id="deskNumber" type="text" placeholder="" class="o-forms-text" value="" ></input>
+                    
+                        <!--Origami Form Select Option || Search By Business Area drop down-->
+                        <div id="businessArea">
+                            <c:OrigamiFormSelectOption />
+                        </div>
+                        <!--Origami Form Select Option -->
+            </div>
+        </div>
+        <div data-o-grid-colspan="12">
+        <button type="button" class="o-buttons o-buttons--standout" onclick="saveChanges()">Save</button>
+        <button type="button" class="o-buttons o-buttons--standout" onclick="cancelChanges()">Cancel</button>
+        </div>
+    </div>
+
+<!--<div class="o-grid-row">-->
+            <!--Origami Footer Component -->
+            <div id="footer" data-o-grid-colspan="12">
+                <c:OrigamiFooter />
+            </div>
+            <!--Origami Footer Component END-->
+<!--</div>-->
+
+
+
+    
+
+    <apex:includeScript value="{!$Resource.JavascriptHelper}"/>
+    <apex:includeScript value="{!$Resource.Handlebars}"/>
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="//build.origami.ft.com/v2/bundles/js?modules=o-table@^3.0.1"></script>
+<script src="//build.origami.ft.com/v2/bundles/js?modules=o-header@^4.0.0"></script>
+<script src="//build.origami.ft.com/v2/bundles/js?modules=o-grid@^4.0.7"></script>
+    <script>
+    j$ = jQuery.noConflict();
+    var userId = '';
+    var errorMessagesContext;
+    var messagesContext;
+    var errorMessagesSource = j$("#OrigamiFormGlobalErrorMessage").html();
+    var messagesSource = j$("#OrigamiFormGlobalMessage").html();
+    var errorMessagesTemplate = Handlebars.compile(errorMessagesSource);
+    var messagesTemplate = Handlebars.compile(messagesSource);
+
+    userId = getURLParameter('Id');
+
+    function getUserDetails(currentUserId){
+        
+      Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.EditMyDetailsController.getUser}',currentUserId,
+            function(result, event){
+                if (event.status) {
+                    if(result != null){
+                        if(result.BusinessArea__c != null){
+                            document.getElementById("businessAreaSelect").value = result.BusinessArea__c;
+                         }
+
+                         document.getElementById("ftRegion").value = result.FT_Region__c;
+                         var joinDate = new Date(result.Joining_Date__c);
+
+                         document.getElementById("joiningDate").value = joinDate.getDate() + '/' + (joinDate.getMonth()+1) + '/' + joinDate.getFullYear();
+                         document.getElementById("manager").value = this.htmlUnescape(result.Manager.FirstName + ' ' + result.Manager.LastName);
+                         document.getElementById("deskNumber").value = result.Desk_Number__c;
+                         document.getElementById("title").value = result.Title;
+                    
+                    }else{
+                        errorMessagesContext = {message: 'The user details could not be found.'}
+
+                        document.getElementById("responseErrors").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                    }
+                 
+                    
+                } else if (event.type === 'exception') {
+                    errorMessagesContext = {message: event.message }
+                    document.getElementById("responseErrors").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                } else {
+                    document.getElementById("responseErrors").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                }
+            }, 
+            {escape: true}
+        );
+    }
+
+    function saveChanges(){
+        var desk = document.getElementById("deskNumber").value;
+        var title = document.getElementById("title").value;
+        var businessArea = document.getElementById("businessAreaSelect").value;
+        var manager = document.getElementById("manager").value;
+
+      Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.EditMyDetailsController.save}', userId, desk, title, businessArea, manager,
+            function(result, event){
+                if (event.status) {
+                    if(result === 'The User has been updated'){
+                        
+                        messagesContext = {message: 'The User has been updated'}
+                        document.getElementById("pageMessages").innerHTML = messagesTemplate(messagesContext);
+
+                        location.reload();
+                        
+                    }else{
+                    }
+                } else if (event.type === 'exception') {
+                    errorMessagesContext = {message: event.message }
+                    document.getElementById("responseErrors").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                } else {
+                    document.getElementById("responseErrors").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                }
+            }, 
+            {escape: true}
+        );
+    }
+
+    function cancelChanges(){
+      Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.EditMyDetailsController.cancel}',
+            function(result, event){
+                if (event.status) {
+                    window.location = result;
+                } else if (event.type === 'exception') {
+                    errorMessagesContext = {message: event.message }
+                    document.getElementById("responseErrors").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                } else {
+                    document.getElementById("responseErrors").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                }
+            }, 
+            {escape: true}
+        );
+    }
+
+    
+    function init(){
+        
+        
+        //////////////////////////////
+        //Initialise Header Component
+        //////////////////////////////
+        var headerContext;
+        headerContext = {Title: "Edit My Details", Tagline: "", hasPrimaryNav: false}
+        var headerSource = j$("#OrigamiHeader").html();
+        var headerTemplate = Handlebars.compile(headerSource);
+
+        if(headerTemplate(headerContext) != null){
+            document.getElementById("header").innerHTML = headerTemplate(headerContext);
+        }
+
+        //////////////////////////////
+            //Initialise Footer Component
+            //////////////////////////////
+            var footerContext;
+            footerContext = {SectionLabel: "",
+                             sectionLinks: [
+                                    {URL: "", LinkLabel: ""}
+                                 ]
+                            }
+
+            var footerSource = j$("#OrigamiFooter").html();
+            var footerTemplate = Handlebars.compile(footerSource);
+
+            if(footerTemplate(footerContext) != null){
+                document.getElementById("footer").innerHTML = footerTemplate(footerContext);
+            }
+
+        ////////////////////////////////////////////////////
+        //Initialise Business Area Select Option Component
+        ////////////////////////////////////////////////////
+        var businessAreaContext;
+        businessAreaContext = {Label: "Business Area", selectId: "businessAreaSelect", suffixButtonOnClick: "getUsers()",
+                               selectOptions: [
+                                        {Value: "Please select a business area", ValueLabel: "Please select a business area"},
+                                        {Value: "B2B", ValueLabel: "B2B"},
+                                        {Value: "Board", ValueLabel: "Board"},
+                                        {Value: "Commercial", ValueLabel: "Commercial"},
+                                        {Value: "Communications", ValueLabel: "Communications"},
+                                        {Value: "Editorial", ValueLabel: "Editorial"},
+                                        {Value: "Facilities and Operations", ValueLabel: "Facilities and Operations"},
+                                        {Value: "FT.Com", ValueLabel: "FT.Com"},
+                                        {Value: "FT Chinese", ValueLabel: "FT Chinese"},
+                                        {Value: "Global Finance", ValueLabel: "Global Finance"},
+                                        {Value: "Global HR", ValueLabel: "Global HR"},
+                                        {Value: "NYIF and ExecSense", ValueLabel: "NYIF and ExecSense"},
+                                        {Value: "Pearson Professional", ValueLabel: "Pearson Professional"},
+                                        {Value: "Product Management", ValueLabel: "Product Management"},
+                                        {Value: "Strategic Products", ValueLabel: "Strategic Products"},
+                                        {Value: "Strategy & Efficacy", ValueLabel: "Strategy & Efficacy"},
+                                        {Value: "Technology", ValueLabel: "Technology"}
+                                ]
+                            }
+        var businessAreaSource = j$("#OrigamiSelectOption").html();
+        
+        var businessAreaTemplate = Handlebars.compile(businessAreaSource);
+
+        if(businessAreaTemplate(businessAreaContext) != null){
+            document.getElementById("businessArea").innerHTML = businessAreaTemplate(businessAreaContext);
+        }
+
+
+        getUserDetails(userId);
+    }
+
+    init();
+
+
+    </script>
+
+    <script type="text/javascript">
+        var availableUsers = [];
+
+          j$(function() {
+            
+            Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.EditMyDetailsController.getAllCompanyUsers}',
+            function(result, event){
+                if (event.status) {
+                
+                 if(result != null){
+                    for(var u = 0; u < result.length; u++){
+                        if(result[u].Name != null || result[u].Name != ''){
+                            availableUsers.push(this.htmlUnescape(result[u].Name));
+                        }
+                        
+                    }
+                    
+                 }
+                
+                j$( "#manager" ).autocomplete({source: availableUsers});
+
+                } else if (event.type === 'exception') {
+                    errorMessagesContext = {message: event.message }
+                    document.getElementById("responseErrors").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                } else {
+                   document.getElementById("responseErrors").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                }
+            },  
+            {escape: true}
+        );
+
+  });
+
+        	function htmlEscape(str) {
+                    return String(str)
+                            .replace(/&/g, '&amp;')
+                            .replace(/"/g, '&quot;')
+                            .replace(/'/g, '&#39;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;');
+           	}
+        	function htmlUnescape(value){
+                    return String(value)
+                        .replace(/&quot;/g, '"')
+                        .replace(/&#39;/g, "'")
+                        .replace(/&lt;/g, '<')
+                        .replace(/&gt;/g, '>')
+                        .replace(/&amp;/g, '&');
+         	}     
+  </script>
+    
+
+</apex:page>

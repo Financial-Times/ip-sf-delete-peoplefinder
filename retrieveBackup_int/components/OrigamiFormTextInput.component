@@ -1,0 +1,22 @@
+<apex:component >
+	<script id="OrigamiFormTextInput" type="text/x-handlebars-template">
+		<div class="o-forms-group">
+			<label class="o-forms-label">{{Label}}</label>
+			<small class="o-forms-additional-info">{{PromptText}}</small>
+			<input id="{{Id}}" type="text" placeholder="{{Placeholder}}" class="o-forms-text"></input>
+		</div>
+	</script>
+
+	<script id="OrigamiFormTextInputWithSuffixButton" type="text/x-handlebars-template">
+		<div class="o-forms-group">
+		<label class="o-forms-label">{{Label}}</label>
+		<small class="o-forms-additional-info">{{PromptText}}</small>
+		<div class="o-forms-affix-wrapper">
+			<input id="{{Id}}" type="text" placeholder="{{Placeholder}}" class="o-forms-text"></input>
+			<div class="o-forms-suffix">
+				<button type="button" class="o-buttons" onclick="{{onClickAction}}">{{ButtonLabel}}</button>
+			</div>
+		</div>
+		</div>
+	</script>
+</apex:component>

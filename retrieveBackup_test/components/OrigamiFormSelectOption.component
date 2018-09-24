@@ -1,0 +1,30 @@
+<apex:component >
+<script id="OrigamiSelectOptionSuffixButton" type="text/x-handlebars-template">
+	<div class="o-forms-group">
+	    <label class="o-forms-label">{{Label}}</label>
+	    <div class="o-forms-affix-wrapper">
+	        <select id="{{selectId}}" class="o-forms-select">
+	        	{{#each selectOptions}}
+	        	<option value="{{Value}}">{{ValueLabel}}</option>
+	            {{/each}}
+	        </select>
+	        <div class="o-forms-suffix">
+	            <button type="button" class="o-buttons" onclick="{{suffixButtonOnClick}}">Go</button>
+	        </div>
+	    </div>
+	</div>
+</script>
+
+<script id="OrigamiSelectOption" type="text/x-handlebars-template">
+	    <label class="o-forms-label">{{Label}}</label>
+	    <div class="o-forms-affix-wrapper">
+	        <select id="{{selectId}}" class="o-forms-select">
+	        	{{#each selectOptions}}
+	        	<option value="{{Value}}">{{ValueLabel}}</option>
+	            {{/each}}
+	        </select>
+	        
+	    </div>
+	
+</script>
+</apex:component>

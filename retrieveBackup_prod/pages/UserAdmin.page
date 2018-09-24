@@ -1,0 +1,42 @@
+<apex:page >
+
+    <head>
+        <style>
+        .link <!--TO MAKE LINKS BLUE-->
+        {
+            color: #015ba7 !important;
+        }
+        .infoTextBox <!--TO STYLE TEXT BOX-->
+        {
+            margin: auto;
+            margin-top:17px;
+            margin-bottom: 15px;
+            font-size: 1.2em; 
+            font-weight: normal;
+            border: 1px;
+            border-radius: 8px !important;
+            border-color: #c00 !important;
+            border-style: solid;
+            padding: 8px 8px !important;
+            width: 90% !important;
+            background: #ffc !important;
+        }
+        </style>
+    </head>
+    
+    <apex:pageMessages />
+    <apex:sectionHeader title="User Admin Page has been deprecated." />
+    <apex:form >
+        <apex:pageBlock mode="edit">
+            <apex:outputPanel >
+                <p class="infoTextBox">
+                <b>User Admin Page</b> is no longer supported by Salesforce. <br/><br/> 
+
+                If you have any questions please write to <strong>ip-worker-experience@ft.com</strong><br/><br/>              
+              
+                  
+             </p><br/>
+            </apex:outputPanel>      
+        </apex:pageBlock>  
+    </apex:form>  
+</apex:page>

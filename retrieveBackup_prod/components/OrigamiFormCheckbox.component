@@ -1,0 +1,12 @@
+<apex:component >
+	<script id="OrigamiFormSmallCheckboxes" type="text/x-handlebars-template">
+	<div class="o-forms-group">
+		<label class="o-forms-label">{{Label}}</label>
+		{{#each checkboxes}}
+		<input type="checkbox" name="{{Name}}" value="{{Value}}" class="o-forms-checkbox o-forms-checkbox--small {{extraCSSClasses}}" id="{{Id}}" ></input>
+		<label for="{{Id}}" class="o-forms-label">{{CheckboxLabel}}</label>
+		{{/each}}
+	</div>
+	</script>
+	
+</apex:component>

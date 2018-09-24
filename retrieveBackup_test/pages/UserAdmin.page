@@ -1,0 +1,584 @@
+<apex:page controller="UserAdmin" id="UserAdminPage" sidebar="false">
+   	<link rel="stylesheet" href="//build.origami.ft.com/v2/bundles/css?modules=o-forms@^2.0.0,o-header@^4.0.0,o-footer@^4.1.1,o-ft-icons@^3.3.0,o-buttons@3.0.3,o-colors@^3.3.1,o-forms@^2.0.0,o-table@^3.0.2,o-grid@^4.0.7" />
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/> 
+	 
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script> 
+	
+    <style type="text/css">
+     .noSidebarCell{
+        padding:0px;
+     }
+     div#heading{
+    	font-family: Georgia,serif;
+        font-weight: 400;
+        font-size: 21px;
+        line-height: 27px;
+        border-bottom: 1px;
+        border-bottom-width: 1px;
+        border-bottom-style: dotted;
+        padding-left: 80px;
+   	 }
+     div#topPadding{
+     	padding-top: 25px;
+     }
+     div#body{
+       	padding-left: 80px;
+        padding-right: 80px;
+     }
+        
+     </style>
+    <!--Origami Header Component -->
+    <div id="header"> 
+        <c:OrigamiHeader />
+    </div>
+    <!--Origami Header Component END-->
+
+	<div>
+    <div id="heading">
+        <p>HR</p>
+    </div>
+    <div id="topPadding" class="o-grid-row">
+	         <!--Origami Form Messages Component || ErrorMessages & PageMessages -->
+		     <div id="messages" data-o-grid-colspan="8 S12 M8"> 
+		            <c:OrigamiFormMessages />
+	        </div>
+	        <!--Origami Form Messages Component END-->
+	</div>
+    <div id="body" class="o-grid-row">
+		<div data-o-grid-colspan="6">
+			<div>
+				
+				<div class="o-forms-group">
+                    <label class="o-forms-label">Name</label>
+        			<input id="name" type="text" placeholder="" class="o-forms-text" disabled="true"></input>
+				    <label class="o-forms-label">FT Region</label>
+        			<input id="ftRegion" type="text" placeholder="" class="o-forms-text" value=""></input>
+        			<label class="o-forms-label">Joining Date</label>
+        			<input id="joiningDate" type="text" class="o-forms-text" value=""></input>
+				    	<!--Origami Form Select Option || UserType drop down-->
+					    <div id="userType">
+					        <c:OrigamiFormSelectOption />
+					    </div>
+					    <!--Origami Form Select Option -->
+				        <!--Origami Form Select Option || Business Area drop down-->
+					    <div id="businessArea">
+					        <c:OrigamiFormSelectOption />
+					    </div>
+					    <!--Origami Form Select Option -->
+        			<label class="o-forms-label">FT Employee Payroll Number</label>
+        			<input id="payrollNumber" type="text" placeholder="" class="o-forms-text" value="" ></input>
+        		</div>
+			</div>
+		</div> 
+		<div data-o-grid-colspan="6">
+			<div>
+				<label class="o-forms-label">Manager</label>
+        			<input id="manager" type="text" placeholder="" class="o-forms-text" value=""></input>
+        			<label class="o-forms-label">Title</label>
+        			<input id="title" type="text" placeholder="" class="o-forms-text" value="" ></input>
+        			<label class="o-forms-label">Cost Center Name</label>
+        			<input id="costCenterName" type="text" placeholder="" class="o-forms-text" value="" ></input>
+        			<label class="o-forms-label">Cost Center Number</label>
+        			<input id="costCenterNumber" type="text" placeholder="" class="o-forms-text" value="" ></input>
+        			<label class="o-forms-label">Notes</label>
+        			<input id="Notes" type="text" placeholder="" class="o-forms-text" value="" ></input>
+        			<label class="o-forms-label">PA Details</label>
+        			<input id="paDetails" type="text" placeholder="" class="o-forms-text" value="" ></input>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<div>
+    <div id="heading">
+        <p>Work Schedule</p>
+    </div>
+    <div id="topPadding" class="o-grid-row">
+		<div id="body" data-o-grid-colspan="6">
+			<div>
+				
+				<div class="o-forms-group">
+					<input id="WorkMonday" type="checkbox" name="monday" class="o-forms-checkbox o-forms-checkbox--small"></input>
+        			<label for="WorkMonday" class="o-forms-label">Monday</label>
+				    
+        			<input id="WorkTuesday" type="checkbox" name="tuesday" class="o-forms-checkbox o-forms-checkbox--small"></input>
+        			<label for="WorkTuesday" class="o-forms-label">Tuesday</label>
+				    
+        			<input id="WorkWednesday" type="checkbox" name="Wednesday" class="o-forms-checkbox o-forms-checkbox--small"></input>
+        			<label for="WorkWednesday" class="o-forms-label">Wednesday</label>
+				    
+        			<input id="WorkThursday" type="checkbox" name="Thursday" class="o-forms-checkbox o-forms-checkbox--small"></input>
+        			<label for="WorkThursday" class="o-forms-label">Thursday</label>
+				    
+				    <input id="WorkFriday" type="checkbox" name="Friday" class="o-forms-checkbox o-forms-checkbox--small"></input>
+    				<label for="WorkFriday" class="o-forms-label">Friday</label>
+				    
+				</div>
+			</div>
+		</div>
+		<div id="body" data-o-grid-colspan="6">
+			<div>
+					<input id="WorkSaturday" type="checkbox" name="Saturday" class="o-forms-checkbox o-forms-checkbox--small"></input>
+					<label for="WorkSaturday" class="o-forms-label">Saturday</label>
+				    
+				    <input id="WorkSunday" type="checkbox" name="Sunday" class="o-forms-checkbox o-forms-checkbox--small"></input>
+    				<label for="WorkSunday" class="o-forms-label">Sunday</label>
+				    
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<div>
+    <div id="heading">
+        <p>Facilities</p>
+    </div>
+
+    <div id="topPadding" class="o-grid-row">
+		<div data-o-grid-colspan="6">
+			<div>
+				
+				<div id="body" class="o-forms-group">
+        			<label class="o-forms-label">Desk Number</label>
+        			<input id="deskNumber" ype="text" placeholder="" class="o-forms-text" value="" ></input>
+    
+				</div>
+			</div>
+		</div>
+		<div id="body" data-o-grid-colspan="12">
+		<button type="button" class="o-buttons o-buttons--standout" onclick="updateUserDetails()">Save</button>
+		<button type="button" class="o-buttons o-buttons--standout" onclick="cancel()">Cancel</button>
+		</div>
+	</div>
+
+</div>
+
+<div>
+    <div id="heading">
+        <p>User Audit</p>
+    </div>
+
+    <div id="topPadding">
+		<div data-o-grid-colspan="12" id="auditTable">
+	       
+		</div>
+	</div>
+
+</div>	
+
+	<div class="o-forms__global-message--error" id="errorMessages"></div>
+
+	<apex:includeScript value="{!$Resource.JavascriptHelper}"/>
+	<apex:includeScript value="{!$Resource.Handlebars}"/>
+<script src="//build.origami.ft.com/v2/bundles/js?modules=o-header@^4.0.0"></script>
+<script src="//build.origami.ft.com/v2/bundles/js?modules=o-table@^3.0.2"></script>
+<script src="//build.origami.ft.com/v2/bundles/js?modules=o-grid@^4.0.7"></script>
+
+	<script type="text/javascript">
+	j$ = jQuery.noConflict();
+	var errorMessagesContext;
+    var messagesContext;
+    var errorMessagesSource = j$("#OrigamiFormGlobalErrorMessage").html();
+    var messagesSource = j$("#OrigamiFormGlobalMessage").html();
+    var errorMessagesTemplate = Handlebars.compile(errorMessagesSource);
+    var messagesTemplate = Handlebars.compile(messagesSource);
+
+	function init(){ 
+		
+		var device = determineDevice();
+		var hasEditPermissions = false;
+
+		getUserDetails();	
+	  	getUserHistory();
+	}
+
+
+ function cancel(){
+	  Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.UserAdmin.cancel}',
+            function(result, event){
+                if (event.status) {
+                  window.location = result;
+
+                } else if (event.type === 'exception') {
+                	errorMessagesContext = {message: event.message }
+                    document.getElementById("messages").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                } else {
+                    errorMessagesContext = {message: event.message }
+                    document.getElementById("messages").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                }
+            }, 
+            {escape: true}
+        );
+	}
+
+  function getUserHistory(){
+	var userId = getURLParameter('Id');
+	  Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.UserAdmin.getUserHistory}',userId,
+            function(result, event){
+                if (event.status) {
+                 	table = '<div class=\"o-table-wrapper o-table--compact\" style=\"background-color: #fff1e0;\"><table class=\"o-table\"><tr class=\"o-table--row-stripes\"><th>Field Label</th><th>Previous Value</th><th>New Value</th><th>Changed By</th><th>Date/Time Changed</th></tr>';
+
+                 	for (var u = 0; u < result.length; u++) { 
+		                 		table += '<tr scope=\"row\">';
+								
+		                    	table += '<td class=\"o-table--horizontal-lines\">' + result[u].USERHISTORY__Field_Label__c + '</td>';
+								
+                        		table += '<td class=\"o-table--horizontal-lines\">' + result[u].USERHISTORY__Previous_Value__c + '</td>';
+
+								table += '<td class=\"o-table--horizontal-lines\">' + result[u].USERHISTORY__New_Value__c + '</td>';
+
+		                    	table += '<td class=\"o-table--horizontal-lines\">' + result[u].USERHISTORY__Changed_By__r.Name + '</td>';
+
+		                    	var modifiedDate = new Date(result[u].USERHISTORY__Date_Time_Changed__c);
+		                    	table += '<td data-o-table-data-type=\"date\">' + modifiedDate.toDateString();
+
+		                    	table += '</td></tr>';
+		                    	
+		                    }
+		                    
+		                    table += '</table>';
+
+
+		                    if(table != null){
+		                 	var noErrors = '';
+	                    	document.getElementById('auditTable').innerHTML = table;
+	                    	document.getElementById('messages').innerHTML = noErrors;
+	                    }
+		                    
+                } else if (event.type === 'exception') {
+                    errorMessagesContext = {message: event.message }
+                    document.getElementById("messages").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                } else {
+                    errorMessagesContext = {message: event.message }
+                    document.getElementById("messages").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                }
+            }, 
+            {escape: true}
+        );
+	}
+
+	function getUserDetails(){
+		var userId = getURLParameter('Id');
+	  Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.UserAdmin.getUser}',userId,
+            function(result, event){
+                if (event.status) {
+                
+                //Clean undefined results
+                var title = cleanUndefinedVariables(result.Title);
+                var businessArea = cleanUndefinedVariables(result.BusinessArea__c);
+                var userType = cleanUndefinedVariables(result.User_Type__c);
+                var extension = cleanUndefinedVariables(result.Extension);
+                var deskNum = cleanUndefinedVariables(result.Desk_Number__c);
+                var region = cleanUndefinedVariables(result.FT_Region__c);
+                var notes = cleanUndefinedVariables(result.Notes__c);
+                var payrollNum = cleanUndefinedVariables(result.FT_Employee_Payroll_Number__c);
+                var costCode = cleanUndefinedVariables(result.Cost_Center_Name__c);
+                var costCodeNum = cleanUndefinedVariables(result.Cost_Center_Number__c);   
+                var name = this.htmlUnescape(cleanUndefinedVariables(result.Name));
+
+                 if(result.BusinessArea__c != null){
+                 	document.getElementById("businessAreaSelect").value = businessArea;
+                 }
+
+                 var manager = '';
+		         if(result.Manager === undefined || result.Manager === "" || result.Manager === null || typeof result.Manager == "undefined"){
+		                manager = '';
+		         }else{
+		                manager += this.htmlUnescape(result.Manager.FirstName + ' ' + result.Manager.LastName);
+		         }
+
+		         var paName = '';
+		         if(result.PA_Details__c === undefined || result.PA_Details__c === "" || result.PA_Details__c === null || typeof result.PA_Details__c == "undefined"){
+		                paName = '';
+		         }else{
+		                paName += this.htmlUnescape(result.PA_Details__r.Name);
+		         }
+
+                 document.getElementById("ftRegion").value = region;
+                 
+                 var joinDate = new Date(result.Joining_Date__c);
+                 
+              	Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.UserAdmin.getCurrentUser}',
+            		function(result,event)
+          		{
+             		if(event.status){
+                        if(result.LocaleSidKey == 'en_US'){
+                            
+                            document.getElementById("joiningDate").value = (joinDate.getMonth()+1) + '/' + joinDate.getDate() + '/' + joinDate.getFullYear();
+                        }	
+                    	else{
+                 			
+                            document.getElementById("joiningDate").value = joinDate.getDate() + '/' + (joinDate.getMonth()+1) + '/' + joinDate.getFullYear();       
+                  		}
+                 	}
+                },
+                {escape: true}
+                );
+                    
+                 document.getElementById("manager").value = manager;
+                 document.getElementById("deskNumber").value = deskNum;
+                 document.getElementById("title").value = title;
+                 document.getElementById("userTypeSelect").value = userType;
+                 document.getElementById("costCenterName").value = costCode;
+                 document.getElementById("costCenterNumber").value = costCodeNum;
+                 document.getElementById("payrollNumber").value = payrollNum;
+                 document.getElementById("paDetails").value = paName;
+                 document.getElementById("Notes").value = notes;
+                 document.getElementById("name").value = name;
+
+
+                 if(result.Work_on_Monday__c == true){
+                 	document.getElementById("WorkMonday").checked = true;
+                 }
+                 if(result.Work_on_Tuesday__c == true){
+                 	document.getElementById("WorkTuesday").checked = true;
+                 }
+                 if(result.Work_on_Wednesday__c == true){
+                 	document.getElementById("WorkWednesday").checked = true;
+                 }
+                 if(result.Work_on_Thursday__c == true){
+                 	document.getElementById("WorkThursday").checked = true;
+                 }
+                 if(result.Work_on_Friday__c == true){
+                 	document.getElementById("WorkFriday").checked = true;
+                 }
+                 if(result.Work_on_Saturday__c == true){
+                 	document.getElementById("WorkSaturday").checked = true;
+                 }
+                 if(result.Work_on_Sunday__c == true){
+                 	document.getElementById("WorkSunday").checked = true;
+                 }
+					
+                } else if (event.type === 'exception') {
+                    errorMessagesContext = {message: event.message }
+                    document.getElementById("messages").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                } else {
+                    errorMessagesContext = {message: event.message }
+                    document.getElementById("messages").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                }
+            }, 
+            {escape: true}
+        );
+	}
+
+
+	function updateUserDetails(){
+		var userId = getURLParameter('Id');
+	  
+	  	
+        var manager = document.getElementById("manager").value;
+        var userType = document.getElementById("userTypeSelect").value;
+        var deskNumber = document.getElementById("deskNumber").value;
+        var businessArea = document.getElementById("businessAreaSelect").value;
+        var title = document.getElementById("title").value;
+        var region = document.getElementById("ftRegion").value;
+        var joinDate = document.getElementById("joiningDate").value;
+        var monday = document.getElementById("WorkMonday").checked;
+        var tuesday = document.getElementById("WorkTuesday").checked;
+        var wednesday = document.getElementById("WorkWednesday").checked;
+        var thursday = document.getElementById("WorkThursday").checked;
+        var friday = document.getElementById("WorkFriday").checked;
+        var saturday = document.getElementById("WorkSaturday").checked;
+        var sunday = document.getElementById("WorkSunday").checked;
+        var payroll = document.getElementById("payrollNumber").value;
+        var ccName = document.getElementById("costCenterName").value;
+        var ccNumber = document.getElementById("costCenterNumber").value;
+        var pa = document.getElementById("paDetails").value;
+        var notes = document.getElementById("Notes").value;
+
+
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.UserAdmin.save}', userId,  manager,  userType,  deskNumber,  businessArea,title, region, 
+                               joinDate,  monday,  tuesday,  wednesday, thursday, friday,  saturday,  sunday,  payroll,  ccName,
+                               ccNumber, pa, notes,
+                              
+            function(result, event){
+                if (event.status) {
+                        location.reload();
+                } else if (event.type === 'exception') {
+                    errorMessagesContext = {message: event.message }
+                    document.getElementById("messages").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                } else {
+                    errorMessagesContext = {message: event.message }
+                    document.getElementById("messages").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                }
+            }, 
+            {escape: true}
+        );
+	}
+
+	init();
+
+	</script>
+
+  <script type="text/javascript">
+		j$ = jQuery.noConflict();
+		var availableUsers = [];
+		
+        //////////////////////////////
+        //Initialise Header Component
+        //////////////////////////////
+        var headerContext;
+        headerContext = {Title: "User Details", Tagline: ""}
+        var headerSource = j$("#OrigamiHeader").html();
+        var headerTemplate = Handlebars.compile(headerSource);
+
+        if(headerTemplate(headerContext) != null){
+            document.getElementById("header").innerHTML = headerTemplate(headerContext);
+        }
+
+        ////////////////////////////////////////////////////
+        //Initialise Business Area Select Option Component
+        ////////////////////////////////////////////////////
+        var businessAreaContext;
+        businessAreaContext = {Label: "Search by Business Area", selectId: "businessAreaSelect", suffixButtonOnClick: "getUsers()",
+                               selectOptions: [
+                                        {Value: "Please select a business area", ValueLabel: "Please select a business area"},
+                                        {Value: "B2B", ValueLabel: "B2B"},
+                                        {Value: "Board", ValueLabel: "Board"},
+                                        {Value: "Commercial", ValueLabel: "Commercial"},
+                                        {Value: "Communications", ValueLabel: "Communications"},
+                                        {Value: "Editorial", ValueLabel: "Editorial"},
+                                        {Value: "Facilities and Operations", ValueLabel: "Facilities and Operations"},
+                                        {Value: "FT.Com", ValueLabel: "FT.Com"},
+                                        {Value: "FT Chinese", ValueLabel: "FT Chinese"},
+                                        {Value: "Global Finance", ValueLabel: "Global Finance"},
+                                        {Value: "Global HR", ValueLabel: "Global HR"},
+                                        {Value: "NYIF and ExecSense", ValueLabel: "NYIF and ExecSense"},
+                                        {Value: "Pearson Professional", ValueLabel: "Pearson Professional"},
+                                        {Value: "Product Management", ValueLabel: "Product Management"},
+                                        {Value: "Strategic Products", ValueLabel: "Strategic Products"},
+                                        {Value: "Strategy & Efficacy", ValueLabel: "Strategy & Efficacy"},
+                                        {Value: "Technology", ValueLabel: "Technology"}
+                                ]
+                            }
+        var businessAreaSource = j$("#OrigamiSelectOption").html();
+        
+        var businessAreaTemplate = Handlebars.compile(businessAreaSource);
+
+        if(businessAreaTemplate(businessAreaContext) != null){
+            document.getElementById("businessArea").innerHTML = businessAreaTemplate(businessAreaContext);
+        }
+
+
+        ////////////////////////////////////////////////////
+        //Initialise User Type Select Option Component
+        ////////////////////////////////////////////////////
+        var userTypeContext;
+        userTypeContext = {Label: "User Type", selectId: "userTypeSelect",
+                               selectOptions: [
+                                        {Value: "3rd Part Contractor", ValueLabel: "3rd Part Contractor"},
+                                        {Value: "Agency Temp", ValueLabel: "Agency Temp"},
+                                        {Value: "Facility", ValueLabel: "Facility"},
+                                        {Value: "Fixed Term Contract", ValueLabel: "Fixed Term Contract"},
+                                        {Value: "Intern", ValueLabel: "Intern"},
+                                        {Value: "Other", ValueLabel: "Other"},
+                                        {Value: "Permanent", ValueLabel: "Permanent"},
+                                        {Value: "Stringer", ValueLabel: "Stringer"},
+                                        {Value: "Super Stringer", ValueLabel: "Super Stringer"},
+                                        {Value: "Work Experience", ValueLabel: "Work Experience"}
+
+                                ]
+                            }
+        var userTypeSource = j$("#OrigamiSelectOption").html();
+        
+        var userTypeTemplate = Handlebars.compile(userTypeSource);
+
+        if(userTypeTemplate(userTypeContext) != null){
+            document.getElementById("userType").innerHTML = userTypeTemplate(userTypeContext);
+        }
+
+
+		j$(function() {
+            
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.UserAdmin.getCurrentUser}',
+            		function(result,event)
+          	{
+             	if(event.status){
+                    
+                	if(result.LocaleSidKey == 'en_US'){
+                        
+                		j$( "#joiningDate" ).datepicker({
+                    		dateFormat: 'mm/dd/yy'
+                  		});
+                	}
+            		else{
+               			
+                		j$( "#joiningDate" ).datepicker({
+                   			dateFormat: 'dd/mm/yy'
+                		});
+               		}
+              	}                
+          	},
+            {escape: true}
+            );            	
+	  	});
+
+		j$(function() {
+		    
+
+		    Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.UserAdmin.getAllCompanyUsers}',
+            function(result, event){
+                if (event.status) {
+                
+                 if(result != null){
+                 	for(var u = 0; u < result.length; u++){
+                 		if(result[u].Name != null || result[u].Name != ''){
+                 			availableUsers.push(this.htmlUnescape(result[u].Name));
+                 		}
+                 		
+                 	}
+                 	
+                 }
+                     j$( "#manager" ).autocomplete({
+				    	
+				      source: availableUsers
+				    });
+
+                     j$( "#paDetails" ).autocomplete({
+				    	
+				      source: availableUsers
+				    });
+
+                } else if (event.type === 'exception') {
+                    errorMessagesContext = {message: event.message }
+                    document.getElementById("messages").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                } else {
+                    errorMessagesContext = {message: event.message }
+                    document.getElementById("messages").innerHTML = errorMessagesTemplate(errorMessagesContext);
+                }
+            },  
+            {escape: true}
+        );
+
+  });
+
+		function htmlEscape(str){
+            return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+        }
+        function htmlUnescape(value){
+            return String(value)
+                .replace(/&quot;/g, '"')
+                .replace(/&#39;/g, "'")
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&amp;/g, '&');
+        }
+  </script>
+	
+
+</apex:page>

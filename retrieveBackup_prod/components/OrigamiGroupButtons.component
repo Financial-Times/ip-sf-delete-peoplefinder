@@ -1,0 +1,9 @@
+<apex:component >
+	<script id="OrigamiButtonGroup" type="text/x-handlebars-template">
+		<div class="o-buttons__group">
+			{{#each buttons}}
+			{{#if @index}}-->{{/if}}<button class="o-buttons {{extraCSSClasses}}" onclick="{{onClickMethod}}" {{#if disabled}}disabled{{/if}}>{{Name}}</button>{{#unless @last}}<!--{{/unless}}
+			{{/each}}
+		</div>
+	</script>
+</apex:component>

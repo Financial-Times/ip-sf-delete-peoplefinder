@@ -1,0 +1,24 @@
+<apex:component >
+	<script id="OrigamiTable" type="text/x-handlebars-template">
+	<div id="table" class="o-table-wrapper" style="{{TableWrapperExtraCSS}}">
+		<table class="o-table">
+			<tr class="o-table--row-stripes">
+				{{#each columnHeaders}}
+				<th {{#if CssClass}}class="{{CssClass}}"{{/if}} {{#if ExtraCssStyle}}style="{{ExtraCssStyle}}" {{/if}} {{#if DataType}}data-o-table-data-type="{{DataType}}" {{/if}}>{{Heading}}</th>
+				{{/each}}
+			</tr>
+			{{#each rows}}
+			<tr scope="row">
+				{{#each rowDetails}}
+				<td {{#if CssClass}}class="{{CssClass}}"{{/if}} {{#if ExtraCssStyle}}style="{{ExtraCssStyle}}" {{/if}} {{#if DataType}}data-o-table-data-type="{{DataType}}" {{/if}}>
+					{{content}}
+					
+				</td>
+		        {{/each}}
+			</tr>
+			{{/each}}
+		</table>
+	</div>
+
+	</script>
+</apex:component>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>EditMyDetailsController</members>
+        <members>EditMyDetailsControllerTest</members>
+        <members>PeopleFinderController</members>
+        <members>UserAdmin</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>OrigamiAsidePanel</members>
+        <members>OrigamiFooter</members>
+        <members>OrigamiFormCheckbox</members>
+        <members>OrigamiFormMessages</members>
+        <members>OrigamiFormSelectOption</members>
+        <members>OrigamiFormTextInput</members>
+        <members>OrigamiGroupButtons</members>
+        <members>OrigamiHeader</members>
+        <members>OrigamiTable</members>
+        <name>ApexComponent</name>
+    </types>
+    <types>
+        <members>EditMyDetails</members>
+        <members>PeopleFinder</members>
+        <members>UserAdmin</members>
+        <name>ApexPage</name>
+    </types>
+    <version>43.0</version>
+</Package>

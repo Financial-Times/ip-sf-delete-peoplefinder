@@ -1,0 +1,12 @@
+<apex:component >
+	<script id="OrigamiAsidePanel" type="text/x-handlebars-template">
+		<div data-o-component="o-aside-panel" class="o-aside-panel">
+			<div class="o-aside-panel__header">
+				<h3 class="o-aside-panel__heading">{{Heading}}</h3>
+			</div>
+			<div class="o-aside-panel__body">
+				{{Content}}
+			</div>
+		</div>
+	</script>
+</apex:component>
